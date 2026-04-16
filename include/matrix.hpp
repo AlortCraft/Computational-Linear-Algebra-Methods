@@ -12,23 +12,50 @@ class Matrix {
 public:
     Matrix(int r, int c) : row(r), col(c), data(r * c) {}
 
-
-
-
     T& operator[](int r, int c) {
-        return data[r * row + c];
+        return data[r * col + c];
     }
 
-    T& operator+(Matrix m2) {
-        if (row != m2.row || col != m2.col) return NULL;
-
-        Matrix m_soma(row, col);
-        for (std::size_t r = 0; r < row; r++) {
-            for (std::size_t c = 0; c < col; c++) {
-                m_soma[r , c] = this[r , c] + m2[r , c]
-            }
+    // Soma entre matrizes
+    Matrix<T> operator+(const Matrix<T>& other) const {
+        if (row != other.row || col != other.col) {
+            throw std::invalid_argument("Dimensões das Matrizes são diferentes.");
         }
 
-        return m_soma;
+        Matrix<T> result(row, col);
+
+        for (std::size_t i = 0; i < (row + col); ++i) {
+            result.data[i] = this->data[i] + other.data[i];
+        }
+
+        return result;
+    }
+
+    // Subtração entre Matrizes
+    Matrix<T> operator-(const Matrix<T>& other) const {
+        if (row != other.row || col != other.col) {
+            throw std::invalid_argument("Dimensões das Matrizes são diferentes.");
+        }
+
+        Matrix<T> result(row, col);
+
+        for (std::size_t i = 0; i < (row + col); ++i) {
+            result.data[i] = this->data[i] - other.data[i];
+        }
+
+        return result;
+    }
+
+
+
+    // Multiplicação por Escalar
+    Matrix<T> operator*(const T escalar) {
+        Matrix<T> result(row, col);
+
+        for (std::size_t i = 0; i < (row + col); ++i) {
+            result.data[i] = this->data[i] * escalar;
+        }
+
+        return result;
     }
 };

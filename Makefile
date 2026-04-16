@@ -1,64 +1,67 @@
-.PHONY: all run clean rebuild debug release help
+# Makefile for Computational Linear Algebra Methods
 
-CXX ?= g++
-CXXFLAGS ?= -std=c++23 -O2 -Wall -Wextra -Wpedantic -Iinclude
-LDFLAGS ?=
+# Compiler and flags
+CXX := g++
+CXXFLAGS := -std=c++23 -Wall -Wextra -g
+INCLUDE := -Iinclude
 
+# Directories
 SRC_DIR := src
 BUILD_DIR := build
 BIN_DIR := bin
-TARGET := $(BIN_DIR)/cla_methods
+INCLUDE_DIR := include
 
-SRCS := $(wildcard $(SRC_DIR)/*.cpp)
-OBJS := $(SRCS:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
-DEPS := $(OBJS:.o=.d)
+# Output executable
+TARGET := $(BIN_DIR)/ALC.exe
 
-ifeq ($(OS),Windows_NT)
-	TARGET := $(TARGET).exe
-	RM = cmd /c del /Q
-	RM_DIR = cmd /c rmdir /S /Q
-	RUN_CMD = .\$(TARGET)
-else
-	RM = rm -f
-	RM_DIR = rm -rf
-	RUN_CMD = ./$(TARGET)
-endif
+# Source files
+SOURCES := $(SRC_DIR)/main.cpp $(SRC_DIR)/matrix.cpp
+OBJECTS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SOURCES))
+DEPS := $(OBJECTS:.o=.d)
 
+# Default target
+.PHONY: all
 all: $(TARGET)
 
-$(TARGET): $(OBJS) | $(BIN_DIR)
-	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
-
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) -MMD -MP -c $< -o $@
-
-$(BUILD_DIR):
-	@mkdir -p $@
-
+# Create bin directory if it doesn't exist
 $(BIN_DIR):
-	@mkdir -p $@
+	@mkdir -p $(BIN_DIR)
 
+# Create build directory if it doesn't exist
+$(BUILD_DIR):
+	@mkdir -p $(BUILD_DIR)
+
+# Link the executable
+$(TARGET): $(OBJECTS) | $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) -o $@ $^
+
+# Compile source files to object files and generate dependencies
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) $(INCLUDE) -MMD -MP -c $< -o $@
+
+# Include dependency files
 -include $(DEPS)
 
+# Run the executable
+.PHONY: run
 run: $(TARGET)
-	$(RUN_CMD)
+	./$(TARGET)
 
+# Clean build files
+.PHONY: clean
 clean:
-	$(RM_DIR) $(BUILD_DIR) $(BIN_DIR)
+	rm -rf $(BUILD_DIR) $(BIN_DIR)
 
+# Clean and rebuild
+.PHONY: rebuild
 rebuild: clean all
 
-debug: CXXFLAGS := -std=c++23 -g -O0 -Wall -Wextra -Wpedantic -Iinclude
-debug: rebuild
-
-release: CXXFLAGS := -std=c++23 -O3 -DNDEBUG -Wall -Wextra -Wpedantic -Iinclude
-release: rebuild
-
+# Show help
+.PHONY: help
 help:
-	@echo "Targets:"
-	@echo "  all      - Build the project"
-	@echo "  run      - Build and run executable"
-	@echo "  clean    - Remove build artifacts"
-	@echo "  rebuild  - Clean and build"
-	@echo "  debug    - Build with debug flags"
-	@echo "  release  - Build with release flags"
+	@echo "Available targets:"
+	@echo "  all      - Build the project (default)"
+	@echo "  run      - Build and run the executable"
+	@echo "  clean    - Remove build and bin directories"
+	@echo "  rebuild  - Clean and build again"
+	@echo "  help     - Show this help message"
