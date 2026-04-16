@@ -53,5 +53,16 @@ int main() {
         std::cout << std::endl;
     }
 
+    std::cout << std::endl;
+
+    // Multiplicação entre matrizes
+    m_result = (M1 * 2) * m_result;
+    for (int r = 0; r < 2; r++) {
+        for(int c = 0; c < 2; c++) {
+            std::cout << m_result[r, c] << " ";
+        }
+        std::cout << std::endl;
+    }
+
     return 0;
 }
