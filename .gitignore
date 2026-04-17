@@ -1,0 +1,17 @@
+# Build outputs
+build/
+bin/
+
+# Compiled objects and dependency files
+*.o
+*.obj
+*.d
+
+# Executables
+*.out
+*.exe
+main
+
+# Editor/OS files
+.vscode/
+.DS_Store
