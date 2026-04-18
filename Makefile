@@ -15,7 +15,7 @@ INCLUDE_DIR := include
 TARGET := $(BIN_DIR)/ALC.exe
 
 # Source files
-SOURCES := $(SRC_DIR)/main.cpp $(SRC_DIR)/matrix.cpp
+SOURCES := $(wildcard $(SRC_DIR)/*.cpp)
 OBJECTS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SOURCES))
 DEPS := $(OBJECTS:.o=.d)
 
